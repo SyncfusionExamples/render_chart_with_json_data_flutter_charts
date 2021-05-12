@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:async' show Future;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -32,12 +30,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late TooltipBehavior _tooltipBehavior;
   List<SalesData> chartData = [];
 
-  Future<String> _loadSalesDataAsset() async {
-    return await rootBundle.loadString('assets/data.json');
-  }
-
   Future loadSalesData() async {
-    String jsonString = await _loadSalesDataAsset();
+    String jsonString = await rootBundle.loadString('assets/data.json');
     final jsonResponse = json.decode(jsonString);
     setState(() {
       for (Map<String, dynamic> i in jsonResponse) {
