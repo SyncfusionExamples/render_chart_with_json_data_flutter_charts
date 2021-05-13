@@ -27,7 +27,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late TooltipBehavior _tooltipBehavior;
   List<SalesData> chartData = [];
 
   Future loadSalesData() async {
@@ -43,7 +42,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _tooltipBehavior = TooltipBehavior(enable: true);
     loadSalesData();
   }
 
@@ -57,31 +55,26 @@ class _MyHomePageState extends State<MyHomePage> {
             primaryXAxis: CategoryAxis(),
             // Chart title
             title: ChartTitle(text: 'Half yearly sales analysis'),
-            // Enable legend
-            legend: Legend(isVisible: true),
-            // Enable tooltip
-            tooltipBehavior: _tooltipBehavior,
             series: <ChartSeries<SalesData, String>>[
               LineSeries<SalesData, String>(
-                  dataSource: chartData,
-                  xValueMapper: (SalesData sales, _) => sales.year,
-                  yValueMapper: (SalesData sales, _) => sales.sales,
-                  // Enable data label
-                  dataLabelSettings: DataLabelSettings(isVisible: true))
+                dataSource: chartData,
+                xValueMapper: (SalesData sales, _) => sales.month,
+                yValueMapper: (SalesData sales, _) => sales.sales,
+              )
             ]));
   }
 }
 
 class SalesData {
-  SalesData(this.year, this.sales);
+  SalesData(this.month, this.sales);
 
-  final String year;
+  final String month;
   final double sales;
 
   factory SalesData.fromJson(Map<String, dynamic> parsedJson) {
     return SalesData(
-      parsedJson['year'].toString(),
-      parsedJson['sales'] as double,
+      parsedJson['month'].toString(),
+      parsedJson['sales'],
     );
   }
 }
