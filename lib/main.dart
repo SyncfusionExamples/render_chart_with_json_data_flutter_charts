@@ -31,18 +31,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future loadSalesData() async {
     String jsonString = await rootBundle.loadString('assets/data.json');
-    final jsonResponse = json.decode(jsonString);
-    setState(() {
-      for (Map<String, dynamic> i in jsonResponse) {
-        chartData.add(SalesData.fromJson(i));
-      }
-    });
+    final dynamic jsonResponse = json.decode(jsonString);
+    for (Map<String, dynamic> i in jsonResponse) {
+      chartData.add(SalesData.fromJson(i));
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    loadSalesData();
   }
 
   @override
@@ -51,17 +48,51 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: const Text('Syncfusion Flutter chart'),
         ),
-        body: SfCartesianChart(
-            primaryXAxis: CategoryAxis(),
-            // Chart title
-            title: ChartTitle(text: 'Half yearly sales analysis'),
-            series: <ChartSeries<SalesData, String>>[
-              LineSeries<SalesData, String>(
-                dataSource: chartData,
-                xValueMapper: (SalesData sales, _) => sales.month,
-                yValueMapper: (SalesData sales, _) => sales.sales,
-              )
-            ]));
+        body: Center(
+            child: FutureBuilder(
+                future: loadSalesData(),
+                builder: (context, snapshot) {
+                  if (chartData.isNotEmpty) {
+                    return SfCartesianChart(
+                        primaryXAxis: CategoryAxis(),
+                        // Chart title
+                        title: ChartTitle(text: 'Half yearly sales analysis'),
+                        series: <ChartSeries<SalesData, String>>[
+                          LineSeries<SalesData, String>(
+                            dataSource: chartData,
+                            xValueMapper: (SalesData sales, _) => sales.month,
+                            yValueMapper: (SalesData sales, _) => sales.sales,
+                          )
+                        ]);
+                  } else {
+                    return Card(
+                      elevation: 5.0,
+                      child: Container(
+                        height: 100,
+                        width: 400,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Text('Retriving JSON data...',
+                                  style: TextStyle(fontSize: 20.0)),
+                              Container(
+                                height: 40,
+                                width: 40,
+                                child: CircularProgressIndicator(
+                                  semanticsLabel: 'Retriving JSON data',
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.blueAccent),
+                                  backgroundColor: Colors.grey[300],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                })));
   }
 }
 
