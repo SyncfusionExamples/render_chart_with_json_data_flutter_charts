@@ -30,11 +30,15 @@ class _MyHomePageState extends State<MyHomePage> {
   List<SalesData> chartData = [];
 
   Future loadSalesData() async {
-    String jsonString = await rootBundle.loadString('assets/data.json');
-    final dynamic jsonResponse = json.decode(jsonString);
+    String jsonString = await getJsonFromAssets();
+    final jsonResponse = json.decode(jsonString);
     for (Map<String, dynamic> i in jsonResponse) {
       chartData.add(SalesData.fromJson(i));
     }
+  }
+
+  Future<String> getJsonFromAssets() async {
+    return await rootBundle.loadString('assets/data.json');
   }
 
   @override
@@ -50,9 +54,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         body: Center(
             child: FutureBuilder(
-                future: loadSalesData(),
+                future: getJsonFromAssets(),
                 builder: (context, snapshot) {
-                  if (chartData.isNotEmpty) {
+                  loadSalesData();
+                  if (snapshot.hasData) {
                     return SfCartesianChart(
                         primaryXAxis: CategoryAxis(),
                         // Chart title
