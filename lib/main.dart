@@ -30,8 +30,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<SalesData> chartData = [];
 
   Future loadSalesData() async {
-    String jsonString = await getJsonFromAssets();
-    final jsonResponse = json.decode(jsonString);
+    final String jsonString = await getJsonFromAssets();
+    final dynamic jsonResponse = json.decode(jsonString);
     for (Map<String, dynamic> i in jsonResponse) {
       chartData.add(SalesData.fromJson(i));
     }
@@ -43,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    loadSalesData();
     super.initState();
   }
 
@@ -56,7 +57,6 @@ class _MyHomePageState extends State<MyHomePage> {
             child: FutureBuilder(
                 future: getJsonFromAssets(),
                 builder: (context, snapshot) {
-                  loadSalesData();
                   if (snapshot.hasData) {
                     return SfCartesianChart(
                         primaryXAxis: CategoryAxis(),
